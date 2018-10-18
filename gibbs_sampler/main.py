@@ -87,7 +87,9 @@ def gibbs_sampling(image, row_post, col_post, L):
     rowscount = np.zeros(IMAGE_HEIGHT)
     colscount = np.zeros(IMAGE_WIDTH)
 
-    stop_points = set([L / 1000, L / 100, L / 10, L / 2, L - 1])
+    BURNING_PERIOD = 10
+
+    # stop_points = set([L / 1000, L / 100, L / 10, L / 2, L - 1])
 
     for t in range(L):
         for i in range(IMAGE_HEIGHT):
@@ -97,13 +99,13 @@ def gibbs_sampling(image, row_post, col_post, L):
                     p *= ALPHA ** abs(image[i, j_] - (k_h_i or column_states[j_]))
                 row_post[k_h_i, i] = p
 
-
         C = 1 / (row_post[0] + row_post[1])
         row_post *= C
 
         for i in range(IMAGE_HEIGHT):
             row_states[i] = np.random.choice([0, 1], size=1, p=row_post[:, i])[0]
-        rowscount += row_states
+        if t > BURNING_PERIOD:
+            rowscount += row_states
 
         for j in range(IMAGE_WIDTH):
             for k_v_j in [0, 1]:
@@ -117,21 +119,23 @@ def gibbs_sampling(image, row_post, col_post, L):
 
         for j in range(IMAGE_WIDTH):
             column_states[j] = np.random.choice([0, 1], size=1, p=col_post[:, j])[0]
-        colscount += column_states
+        if t > BURNING_PERIOD:
+            colscount += column_states
 
-        if t in stop_points:
-            p_h = rowscount / float(L)
-            p_v = colscount / float(L)
+    p_h = rowscount / float(L)
+    p_v = colscount / float(L)
 
-            print "predicted_row_posteriors: (%d iterations)\n" % t, 1 - p_h, "\n", p_h
-            print "predicted column posteriors: (%d iterations)\n" % t, 1 - p_v, "\n", p_v
-            print "\n"
+    print "predicted_row_posteriors: (%d iterations)\n" % t, 1 - p_h, "\n", p_h
+    print "predicted column posteriors: (%d iterations)\n" % t, 1 - p_v, "\n", p_v
+    print "\n"
 
 
 image = np.zeros((IMAGE_HEIGHT, IMAGE_WIDTH), dtype='int32')
 generate_image(image, 0.5)
+print "Image without noise:\n"
 print image, "\n"
 add_noise(image, EPSILON)
+print "Noisy image:\n"
 print image, "\n"
 
 row_posteriors = np.zeros((NUM_COLORS, IMAGE_HEIGHT))
@@ -141,4 +145,4 @@ row_predicted_posteriors = np.zeros((NUM_COLORS, IMAGE_HEIGHT))
 column_predicted_posteriors = np.zeros((NUM_COLORS, IMAGE_WIDTH))
 
 calculate_true_probabilities(image, row_posteriors, column_posteriors)
-gibbs_sampling(image, row_predicted_posteriors, column_predicted_posteriors, 10000)
+gibbs_sampling(image, row_predicted_posteriors, column_predicted_posteriors, 20000)
