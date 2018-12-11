@@ -38,13 +38,14 @@ class PerceptronClassifier:
         if self._discr_func == 'linear':
             x_augmented = np.ones((x.shape[0], self._n + 1))
             x_augmented[:, 1:] = x
+        elif self._discr_func in ['quadratic', 'ellipse']:
+            x_augmented = np.ones((x.shape[0], int((self._n + 1)*(self._n + 2)/2)))
+            x_augmented[:, 1:self._n + 1] = x
+            x_augmented[:, self._n + 1:] = np.array([x[:, i]*x[:, j] for i in range(self._n) for j in range(i, self._n)]).T
         return x_augmented
 
     def _augment_dataset(self):
-        if self._discr_func == 'linear':
-            data = self._X
-            self._X = np.ones((self._m, self._n + 1))
-            self._X[:, 1:] = data
+        self._X = self._augment_feature_vector(self._X)
 
     def _initialize_weight_vector(self):
         weight_vector_size = 0
