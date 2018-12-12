@@ -4,7 +4,7 @@ import numpy.random as rnd
 
 class DatasetGenerator:
 
-    def __init__(self, epsilon=0.2):
+    def __init__(self, epsilon=0.01):
         self._epsilon = epsilon
 
     def generate_separable_data(self, num_points=100, dim=2, discr_func='linear', distr='uniform',
