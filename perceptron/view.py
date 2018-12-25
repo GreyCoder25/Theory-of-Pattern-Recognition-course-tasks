@@ -3,7 +3,7 @@ from utils import DatasetGenerator
 from perceptron import PerceptronClassifier
 import numpy as np
 
-discr_func = 'ellipse'          # choose one of ['linear', 'ellipse', 'quadratic']
+discr_func = 'ellipse'      # choose one of ['linear', 'ellipse', 'quadratic']
 data_generator = DatasetGenerator()
 X, y = data_generator.generate_separable_data(num_points=57, discr_func=discr_func)
 
