@@ -57,3 +57,10 @@ class GaussianMixture:
         """Returns True if models are equal"""
         return np.array_equal(alpha1, alpha2)
 
+    def log_likelihood_of_mu(self, mu_array):
+        mu_array = np.array(mu_array)
+        gaussians = [norm(mu, sigma) for (mu, sigma) in zip(mu_array, self._sigma)]
+        f = np.array([gaussian.pdf(self._X) for gaussian in gaussians]).T[0]
+        log_likelihood = f.dot(self._priors).sum()
+        return log_likelihood
+
