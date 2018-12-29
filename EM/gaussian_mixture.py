@@ -6,8 +6,8 @@ class GaussianMixture:
 
     def __init__(self, num_states, **param_inits):
         self._k = num_states
-        self._mu, self._sigma, self._priors = param_inits.values()
-        self._epsilon = 0.0001
+        self._mu, self._sigma, self._priors = param_inits['mu'], param_inits['sigma'], param_inits['priors']
+        self._epsilon = 1e-10
         # casting array-like parameters to ndarrays
         self._mu = np.array(self._mu)
         self._sigma = np.array(self._sigma)
