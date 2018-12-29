@@ -6,10 +6,15 @@ from scipy.stats import norm
 from gaussian_mixture import GaussianMixture
 
 k = 2
-mu = [-1, 1]
+mu = [1, 4.5]
 sigma = [1, 1]
 priors = [.5, .5]
-num_points = 100
+num_points = 300
+
+print "\nTrue priors: ", priors
+print "True mus: ", mu
+print "True sigmas: ", sigma
+
 components = [norm(mu[idx], sigma[idx]) for idx in range(k)]
 data, pdfs = generate_data(num_points, 'gaussian', num_states=k, mu=mu, sigma=sigma, priors=priors)
 
@@ -21,9 +26,9 @@ initial_priors /= initial_priors.sum()
 em = GaussianMixture(k, mu=initial_mu, sigma=initial_sigma, priors=initial_priors)
 em.fit(data)
 pred_priors, (pred_mu, pred_sigma) = em.predict()
-print("Predicted priors: ", pred_priors)
-print("Predicted mus: ", pred_mu)
-print("Predicted sigmas: ", pred_sigma)
+print "\nPredicted priors: ", pred_priors
+print "Predicted mus: ", pred_mu
+print "Predicted sigmas: ", pred_sigma
 
 # plt.scatter(data, np.zeros_like(data), s=10, c=['blue'])
 plt.scatter(data, pdfs, s=10, c=['blue'])
