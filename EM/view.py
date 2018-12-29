@@ -5,17 +5,19 @@ from data_generators import generate_data
 from scipy.stats import norm
 from gaussian_mixture import GaussianMixture
 
-k = 3
-mu = [-3, 0, 3]
-sigma = [1, 1, 1]
-priors = [.33, .33, .34]
+k = 2
+mu = [-1, 1]
+sigma = [1, 1]
+priors = [.5, .5]
 num_points = 100
 components = [norm(mu[idx], sigma[idx]) for idx in range(k)]
 data, pdfs = generate_data(num_points, 'gaussian', num_states=k, mu=mu, sigma=sigma, priors=priors)
 
-initial_mu = [-3, 0, 3]
-initial_sigma = [1, 1, 1]
-initial_priors = [.33, .33, .34]
+initial_mu = np.linspace(start=-5, stop=5, num=k)
+initial_sigma = np.ones(k)
+initial_priors = np.ones(k, dtype=np.float)
+initial_priors /= initial_priors.sum()
+
 em = GaussianMixture(k, mu=initial_mu, sigma=initial_sigma, priors=initial_priors)
 em.fit(data)
 pred_priors, (pred_mu, pred_sigma) = em.predict()
